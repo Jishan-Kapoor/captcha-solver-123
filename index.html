@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Captcha Solver</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    img {
+      width: 300px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    #result {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@6/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <h1>Captcha Solver</h1>
+  <img src="sample.png" alt="Image">
+  <div id="result">Loading...</div>
+  <script>
+    async function runOCR() {
+      const worker = await Tesseract.createWorker('eng');
+      try {
+        const { data: { text } } = await worker.recognize('sample.png');
+        window.decodedText = text.trim().replace(/\s+/g, '');
+        document.getElementById('result').textContent = `Decoded: ${window.decodedText}`;
+      } catch (err) {
+        document.getElementById('result').textContent = 'Error: ' + err.message;
+      } finally {
+        await worker.terminate();
+      }
+    }
+    document.addEventListener('DOMContentLoaded', runOCR);
+  </script>
+</body>
+</html>
